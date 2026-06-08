@@ -1,0 +1,5 @@
+# Generated at runtime by reclaim-safe.sh / the launchd job
+reclaim.log
+
+# macOS
+.DS_Store
