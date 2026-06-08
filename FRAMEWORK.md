@@ -46,4 +46,6 @@ For each finding capture: **Impact** (High/Med/Low — seconds, GB, watts, or ri
 
 - `audit.sh` — read-only. Sweeps all four lenses, prints a prioritized report. Changes nothing.
 - `reclaim-safe.sh` — purges only regenerable caches; reports GB freed. Safe to run anytime/weekly.
-- `com.corey.housekeeping.plist` — (optional) launchd job to run `reclaim-safe.sh` weekly.
+- `doctor.sh` — read-only. Asserts the startup wins haven't regressed; exits nonzero if any did.
+- `orphans.sh` — read-only. Flags launchd jobs and system extensions whose owning app is gone.
+- `install.sh` + `com.user.housekeeping.plist.template` — (optional) install a per-user launchd job to run `reclaim-safe.sh` weekly.

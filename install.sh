@@ -21,7 +21,7 @@ sed -e "s|__LABEL__|${LABEL}|g" \
     -e "s|__LOG__|${DIR}/reclaim.log|g" \
     "${DIR}/com.user.housekeeping.plist.template" > "$PLIST"
 
-chmod +x "${DIR}/reclaim-safe.sh" "${DIR}/audit.sh"
+chmod +x "${DIR}"/*.sh
 launchctl bootout "${DOMAIN}/${LABEL}" 2>/dev/null || true
 launchctl bootstrap "${DOMAIN}" "$PLIST"
 
