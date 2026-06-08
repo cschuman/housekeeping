@@ -12,6 +12,8 @@ into a reusable method. See [FRAMEWORK.md](FRAMEWORK.md) for the thinking behind
 |------|--------------|
 | `audit.sh` | Read-only. Sweeps four lenses (Time, Space, Energy, Entropy) and prints a prioritized report. Changes nothing. |
 | `reclaim-safe.sh` | Purges only regenerable caches (uv, npm, pip, yarn, pnpm, Homebrew, Docker) and reports GB freed. Safe to run anytime. Supports `--dry-run`. |
+| `doctor.sh` | Read-only. Checks that the shell-startup wins haven't regressed: fast startup, no duplicate `$PATH`, no per-launch completion generation, nvm lazy-loaded, oh-my-zsh auto-update off. Exits nonzero on any regression. |
+| `orphans.sh` | Read-only. Finds launchd jobs and system extensions whose owning app is gone (half-uninstalled leftovers still running in the background). |
 | `install.sh` | Installs a per-user launchd job that runs `reclaim-safe.sh` weekly, so caches never pile up again. |
 | `FRAMEWORK.md` | The method: 5 principles, 4 lenses, an Impact/Effort triage model, and a maintenance cadence. |
 
@@ -24,6 +26,8 @@ cd housekeeping
 ./audit.sh                 # see what's reclaimable (read-only, safe)
 ./reclaim-safe.sh --dry-run   # preview the cache purge
 ./reclaim-safe.sh          # actually reclaim regenerable caches
+./doctor.sh                # check the startup wins haven't regressed (read-only)
+./orphans.sh               # find leftover daemons/extensions with no owning app (read-only)
 ./install.sh               # optional: schedule the weekly auto-cleanup
 ```
 
