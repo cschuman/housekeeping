@@ -49,3 +49,7 @@ For each finding capture: **Impact** (High/Med/Low — seconds, GB, watts, or ri
 - `doctor.sh` — read-only. Asserts the startup wins haven't regressed; exits nonzero if any did.
 - `orphans.sh` — read-only. Flags launchd jobs and system extensions whose owning app is gone.
 - `install.sh` + `com.user.housekeeping.plist.template` — (optional) install a per-user launchd job to run `reclaim-safe.sh` weekly.
+- `warden.sh` + `com.corey.warden.plist.template` — the Projects Estate warden: scans ~/Projects,
+  writes `.warden/manifest.tsv` + `report.md`, regenerates `~/Projects/INDEX.md`, and on Mondays
+  (7:45am launchd) emails the "State of the Estate" via gws and drafts filing proposals. System
+  definition: `~/Projects/PROJECTS.md`. Paired with the `monday-estate-review` scheduled Claude session (8:07am).

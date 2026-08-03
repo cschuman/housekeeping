@@ -1,5 +1,10 @@
 # Generated at runtime by reclaim-safe.sh / the launchd job
 reclaim.log
 
+# Usage dashboard/sentinel outputs — contain project names + spend patterns (personal)
+usage-dashboard.html
+usage-history.tsv
+usage-sentinel.log
+
 # macOS
 .DS_Store
