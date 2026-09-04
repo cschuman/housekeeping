@@ -3,7 +3,7 @@
 A repeatable way to find and fix system cruft before it costs you time, space, energy, or risk.
 Built 2026-06-06. Re-run `./audit.sh` anytime to regenerate findings.
 
-## The 5 principles
+## The 6 principles
 
 1. **Measure before you cut.** Profile and get numbers first. Guessing wastes effort and risks
    breaking something that wasn't actually the problem. (The shell-startup fix came from `zprof` +
@@ -16,6 +16,11 @@ Built 2026-06-06. Re-run `./audit.sh` anytime to regenerate findings.
    auto-refreshes on upgrade — zero future thought required.)
 5. **Reversible & logged.** Prefer changes that regenerate or can be undone. Anything destructive
    gets confirmed and logged before it runs.
+6. **A silent monitor is not a monitor.** Measuring something and writing it to a log nobody
+   reads is indistinguishable from not measuring it. Every probe that can detect a problem needs
+   a path to a human — and that path must stay quiet when things are fine, or it gets ignored
+   too. (Learned 2026-09-04: three weekly runs logged free space falling 40 → 21 → 15 GB and
+   escalated to no one. The disk hit 100%.)
 
 ## The 4 lenses
 
@@ -37,7 +42,10 @@ For each finding capture: **Impact** (High/Med/Low — seconds, GB, watts, or ri
 
 ## Cadence
 
-- **Weekly (automated):** safe cache purges + docker prune + brew cleanup → `reclaim-safe.sh` via launchd.
+- **Weekly (automated):** cache purges + docker prune + brew cleanup + dormant build
+  artifacts (60+ days idle) → `reclaim-safe.sh` via launchd. Emails only on low disk or failure.
+- **On alert (minutes):** when the weekly job emails, run `./reclaim-deep.sh --dry-run`,
+  then execute. This is the manual tier: VM images, simulators, stale worktrees.
 - **Monthly (5 min):** run `./audit.sh`, action the "Now" bucket, review "Decide" items.
 - **Quarterly:** package upgrades (`brew upgrade`, `npm -g update`), prune old toolchain versions,
   cull abandoned projects and dead keys.

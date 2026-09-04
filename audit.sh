@@ -20,10 +20,36 @@ for p in ~/.cache/uv ~/.npm ~/.cache/huggingface ~/.cache/pip ~/Library/Caches/H
 done
 sub "Homebrew reclaimable (dry run):"; brew cleanup -n 2>/dev/null | tail -1
 command -v docker >/dev/null && { sub "Docker:"; docker system df 2>/dev/null | sed 's/^/    /'; }
-sub "Biggest node_modules under ~/Projects:"
-find ~/Projects -maxdepth 4 -name node_modules -type d -prune 2>/dev/null \
-  | while read -r d; do printf '%s\t%s\n' "$(du -sm "$d" 2>/dev/null | cut -f1)" "$d"; done \
-  | sort -rn | head -5 | awk '{printf "    %5sM  %s\n",$1,$2}'
+# No -maxdepth: the worst offenders hide deep. The old -maxdepth 4 missed
+# .claude/worktrees/<wt>/app/node_modules at depth 6 entirely, so this lens
+# under-reported build sprawl by more than half while the disk filled up.
+sub "Build artifacts under ~/Projects (node_modules + Rust target):"
+find ~/Projects -type d \( -name node_modules -o -name target \) -prune 2>/dev/null \
+  | while read -r d; do
+      case "$d" in */target) [ -f "${d%/target}/Cargo.toml" ] || continue ;; esac
+      printf '%s\t%s\n' "$(du -sm "$d" 2>/dev/null | cut -f1)" "$d"
+    done | sort -rn > /tmp/.hk_artifacts.$$
+head -6 /tmp/.hk_artifacts.$$ | awk '{printf "    %5sM  %s\n",$1,$2}'
+awk -F'\t' '{s+=$1; n++} END{printf "    ---- %d dirs totalling %.1f GB\n", n, s/1024}' /tmp/.hk_artifacts.$$
+rm -f /tmp/.hk_artifacts.$$
+
+sub "Heavyweight regenerables (see reclaim-deep.sh):"
+for p in ~/"Library/Application Support/Claude/vm_bundles" \
+         ~/Library/Developer/CoreSimulator/Devices \
+         ~/.gradle ~/.bun ~/.expo; do
+  [ -e "$p" ] && printf '    %-46s %s\n' "$(basename "$p")" "$(sz "$p")"
+done
+sub "Self-updater caches (ShipIt/Sparkle):"
+find ~/Library/Caches -maxdepth 1 -type d -name "*.ShipIt" 2>/dev/null \
+  | while read -r d; do printf '    %-46s %s\n' "$(basename "$d")" "$(sz "$d")"; done
+sub "Stale .claude worktrees:"
+find ~/Projects -type d -path "*/.claude/worktrees/*" -mindepth 3 -maxdepth 6 2>/dev/null \
+  | while read -r wt; do
+      [ -e "$wt/.git" ] || continue
+      d=$(git -C "$wt" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+      u=$(git -C "$wt" log HEAD --not --remotes --oneline 2>/dev/null | wc -l | tr -d ' ')
+      [ "${d:-0}" -eq 0 ] && [ "${u:-0}" -eq 0 ] && printf '    %-8s %s (clean)\n' "$(sz "$wt")" "$(basename "$wt")"
+    done | head -8
 sub "nvm node versions (old ones reclaimable):"; ls ~/.nvm/versions/node 2>/dev/null | sed 's/^/    /'
 sub "Downloads / Desktop / Trash:"
 for p in ~/Downloads ~/Desktop ~/.Trash; do printf '    %-12s %s\n' "$(basename "$p")" "$(sz "$p")"; done
