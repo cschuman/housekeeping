@@ -8,3 +8,7 @@ usage-sentinel.log
 
 # macOS
 .DS_Store
+
+# Audit/overnight run outputs — contain findings across private repos
+# (financial system, auth internals, project inventory). Local only.
+reports/
