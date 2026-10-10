@@ -1,0 +1,295 @@
+{
+  "cleanupPeriodDays": 90,
+  "env": {},
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Read(~/Downloads/api-keys.txt)",
+      "Bash(git:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh run:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh api:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gws gmail:*)",
+      "Bash(gws calendar:*)",
+      "Bash(fly status:*)",
+      "Bash(fly logs:*)",
+      "Bash(fly releases:*)",
+      "Bash(fly secrets list:*)",
+      "Bash(fly auth whoami)",
+      "Bash(fly image show:*)",
+      "Bash(fly apps list)",
+      "Bash(fly deploy:*)",
+      "Bash(ssh casa:*)",
+      "Bash(ssh -o BatchMode=yes:*)",
+      "Bash(scp:*)",
+      "Bash(go mod download:*)",
+      "Bash(go mod tidy)",
+      "Bash(go build:*)",
+      "Bash(go test:*)",
+      "Bash(go vet:*)",
+      "Bash(pnpm:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cargo build:*)",
+      "Bash(cargo test:*)",
+      "Bash(cargo check:*)",
+      "Bash(cargo clippy:*)",
+      "Bash(cargo fmt:*)",
+      "Bash(curl -s:*)",
+      "Bash(curl -fsS:*)",
+      "Bash(curl -sS:*)",
+      "Bash(sqlite3 file\\:*mode=ro*)",
+      "Bash(tailscale status:*)",
+      "Bash(rtk:*)",
+      "mcp__Neon__run_sql",
+      "mcp__Neon__describe_table_schema",
+      "mcp__Neon__get_database_tables",
+      "mcp__Neon__describe_project",
+      "mcp__Neon__describe_branch",
+      "mcp__Neon__list_projects",
+      "mcp__Neon__list_branches",
+      "mcp__Neon__list_slow_queries",
+      "mcp__Neon__explain_sql_statement",
+      "WebSearch",
+      "WebFetch",
+      "Bash(fly apps list:*)",
+      "Bash(fly machine list:*)",
+      "Bash(fly checks list:*)",
+      "Bash(fly auth whoami:*)",
+      "Bash(gws auth status:*)",
+      "Bash(gws gmail users getProfile:*)",
+      "Bash(gws gmail users messages list:*)",
+      "Bash(gws gmail users messages get:*)",
+      "Bash(gws gmail users threads get:*)",
+      "Bash(gws gmail users threads list:*)",
+      "Bash(gws sheets spreadsheets get:*)",
+      "Bash(gws sheets spreadsheets values get:*)",
+      "Bash(gws calendar events list:*)",
+      "Bash(tailscale ping:*)",
+      "Bash(tailscale ip:*)",
+      "Bash(crontab -l)",
+      "Bash(launchctl list:*)",
+      "Bash(launchctl print:*)",
+      "Bash(pgrep:*)",
+      "Bash(/Users/corey/Projects/housekeeping/healthcheck.sh:*)",
+      "Bash(~/Projects/housekeeping/healthcheck.sh:*)"
+    ],
+    "deny": [
+      "Edit(//**/.env)",
+      "Edit(//**/.env.*)",
+      "Bash(rm *.env*)",
+      "Read(~/Downloads/api-keys.txt)",
+      "Bash(env -i gws:*)",
+      "Bash(env -i * gws:*)",
+      "Bash(fly apps destroy:*)",
+      "Bash(fly secrets unset:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)"
+    ],
+    "ask": [
+      "Bash(fly secrets set:*)",
+      "Bash(fly scale:*)",
+      "mcp__Neon__run_sql_transaction",
+      "mcp__Neon__prepare_database_migration",
+      "mcp__Neon__complete_database_migration",
+      "Bash(fly secrets unset:*)",
+      "Bash(fly secrets import:*)",
+      "Bash(fly postgres connect:*)",
+      "Bash(psql:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "fable",
+  "fallbackModel": [
+    "opus",
+    "sonnet"
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/rtk-rewrite.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/workflow-preflight.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/agent-preflight.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/corey/.claude/hooks/enforce-role-model.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/ops-guard.py",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__Neon__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/ops-guard.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__claudebar_hook() { PORT=$(cat \"$HOME/.claude/claudebar-hook-port\" 2>/dev/null || echo 19847); cat | curl -s -X POST \"http://localhost:${PORT}/hook\" -H 'Content-Type: application/json' -d @- > /dev/null 2>&1 & }; __claudebar_hook"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__claudebar_hook() { PORT=$(cat \"$HOME/.claude/claudebar-hook-port\" 2>/dev/null || echo 19847); cat | curl -s -X POST \"http://localhost:${PORT}/hook\" -H 'Content-Type: application/json' -d @- > /dev/null 2>&1 & }; __claudebar_hook"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/preflight.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__claudebar_hook() { PORT=$(cat \"$HOME/.claude/claudebar-hook-port\" 2>/dev/null || echo 19847); cat | curl -s -X POST \"http://localhost:${PORT}/hook\" -H 'Content-Type: application/json' -d @- > /dev/null 2>&1 & }; __claudebar_hook"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__claudebar_hook() { PORT=$(cat \"$HOME/.claude/claudebar-hook-port\" 2>/dev/null || echo 19847); cat | curl -s -X POST \"http://localhost:${PORT}/hook\" -H 'Content-Type: application/json' -d @- > /dev/null 2>&1 & }; __claudebar_hook"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__claudebar_hook() { PORT=$(cat \"$HOME/.claude/claudebar-hook-port\" 2>/dev/null || echo 19847); cat | curl -s -X POST \"http://localhost:${PORT}/hook\" -H 'Content-Type: application/json' -d @- > /dev/null 2>&1 & }; __claudebar_hook"
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__claudebar_hook() { PORT=$(cat \"$HOME/.claude/claudebar-hook-port\" 2>/dev/null || echo 19847); cat | curl -s -X POST \"http://localhost:${PORT}/hook\" -H 'Content-Type: application/json' -d @- > /dev/null 2>&1 & }; __claudebar_hook"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/ops-lock-release.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/corey/.claude/hooks/ops-lock-release.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "code-review@claude-code-plugins": true,
+    "feature-dev@claude-code-plugins": false,
+    "frontend-design@claude-code-plugins": false,
+    "hookify@claude-code-plugins": false,
+    "ralph-wiggum@claude-code-plugins": false,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "security-guidance@claude-code-plugins": false,
+    "serena@claude-plugins-official": false,
+    "swift-lsp@claude-plugins-official": false
+  },
+  "subagentPromptCacheTtl": "1h",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "medium",
+  "autoCompactWindow": 250000,
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "switchModelsOnFlag": true
+}

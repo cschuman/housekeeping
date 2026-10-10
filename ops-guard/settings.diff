@@ -1,0 +1,103 @@
+--- /Users/corey/.claude/settings.json	2026-10-09 22:58:38
++++ settings.proposed.json	2026-10-09 23:43:14
+@@ -59,7 +59,28 @@
+       "mcp__Neon__list_slow_queries",
+       "mcp__Neon__explain_sql_statement",
+       "WebSearch",
+-      "WebFetch"
++      "WebFetch",
++      "Bash(fly apps list:*)",
++      "Bash(fly machine list:*)",
++      "Bash(fly checks list:*)",
++      "Bash(fly auth whoami:*)",
++      "Bash(gws auth status:*)",
++      "Bash(gws gmail users getProfile:*)",
++      "Bash(gws gmail users messages list:*)",
++      "Bash(gws gmail users messages get:*)",
++      "Bash(gws gmail users threads get:*)",
++      "Bash(gws gmail users threads list:*)",
++      "Bash(gws sheets spreadsheets get:*)",
++      "Bash(gws sheets spreadsheets values get:*)",
++      "Bash(gws calendar events list:*)",
++      "Bash(tailscale ping:*)",
++      "Bash(tailscale ip:*)",
++      "Bash(crontab -l)",
++      "Bash(launchctl list:*)",
++      "Bash(launchctl print:*)",
++      "Bash(pgrep:*)",
++      "Bash(/Users/corey/Projects/housekeeping/healthcheck.sh:*)",
++      "Bash(~/Projects/housekeeping/healthcheck.sh:*)"
+     ],
+     "deny": [
+       "Edit(//**/.env)",
+@@ -78,7 +99,11 @@
+       "Bash(fly scale:*)",
+       "mcp__Neon__run_sql_transaction",
+       "mcp__Neon__prepare_database_migration",
+-      "mcp__Neon__complete_database_migration"
++      "mcp__Neon__complete_database_migration",
++      "Bash(fly secrets unset:*)",
++      "Bash(fly secrets import:*)",
++      "Bash(fly postgres connect:*)",
++      "Bash(psql:*)"
+     ],
+     "defaultMode": "auto"
+   },
+@@ -124,6 +149,26 @@
+             "command": "python3 /Users/corey/.claude/hooks/enforce-role-model.py"
+           }
+         ]
++      },
++      {
++        "matcher": "Bash",
++        "hooks": [
++          {
++            "type": "command",
++            "command": "/Users/corey/.claude/hooks/ops-guard.py",
++            "timeout": 10
++          }
++        ]
++      },
++      {
++        "matcher": "mcp__Neon__.*",
++        "hooks": [
++          {
++            "type": "command",
++            "command": "/Users/corey/.claude/hooks/ops-guard.py",
++            "timeout": 10
++          }
++        ]
+       }
+     ],
+     "SessionEnd": [
+@@ -201,6 +246,30 @@
+           }
+         ]
+       }
++    ],
++    "PostToolUse": [
++      {
++        "matcher": "Bash",
++        "hooks": [
++          {
++            "type": "command",
++            "command": "/Users/corey/.claude/hooks/ops-lock-release.py",
++            "timeout": 5
++          }
++        ]
++      }
++    ],
++    "PostToolUseFailure": [
++      {
++        "matcher": "Bash",
++        "hooks": [
++          {
++            "type": "command",
++            "command": "/Users/corey/.claude/hooks/ops-lock-release.py",
++            "timeout": 5
++          }
++        ]
++      }
+     ]
+   },
+   "enabledPlugins": {

@@ -1,0 +1,4 @@
+# contact addresses and live-system state: local only
+known-recipients.txt
+healthcheck.out
+__pycache__/
